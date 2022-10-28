@@ -112,7 +112,7 @@ class StationaryManipulationEnv(BaseEnv):
     def _setup_cameras(self):
         # Camera only for rendering, not included in `_cameras`
         self.render_camera = self._scene.add_camera(
-            "render_camera", 512, 512, 1, 0.01, 10
+            "render_camera", 512, 512, 1.5, 0.01, 10
         )
         self.render_camera.set_local_pose(look_at([1.0, 1.0, 0.8], [0.0, 0.0, 0.5]))
 

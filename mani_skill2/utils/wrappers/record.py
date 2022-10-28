@@ -265,6 +265,21 @@ class RecordEpisode(gym.Wrapper):
             verbose=verbose,
         )
 
+    def flush_images(self, suffix="", verbose=False):
+        import PIL.Image as im
+        import os
+        if not self.save_video or len(self._render_images) == 0:
+            return
+        video_name = "{}".format(self._episode_id)
+        if suffix:
+            video_name += "_" + suffix
+
+        for idx, img in enumerate(self._render_images):
+            img_name = f"{video_name}_{idx:03d}.png"
+            alpha = ((img == 170).sum(axis=2) != 3).astype(np.uint8) * 255
+            img = np.concatenate((img, alpha[:,:,None]), axis=2)
+            im.fromarray(img).save(os.path.join(str(self.output_dir), img_name))
+
     def close(self) -> None:
         if self.save_trajectory:
             if self.reorder_trajectories:

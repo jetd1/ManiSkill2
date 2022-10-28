@@ -80,6 +80,8 @@ class BaseEnv(gym.Env):
         self._enable_kuafu = enable_kuafu
         if self._enable_kuafu:
             kuafu_config = sapien.KuafuConfig()
+            kuafu_config.use_denoiser = False
+            kuafu_config.spp = 1
             if kuafu_kwargs is not None:
                 for k, v in kuafu_kwargs.items():
                     setattr(kuafu_config, k, v)
@@ -355,15 +357,17 @@ class BaseEnv(gym.Env):
 
     def _add_ground(self, altitude=0.0, render=True):
         rend_mtl = self._renderer.create_material()
-        rend_mtl.base_color = [0.06, 0.08, 0.12, 1]
+        rend_mtl.base_color = [0.4, 0.5, 0.7, 1]
         rend_mtl.metallic = 0.0
         rend_mtl.roughness = 0.9
         rend_mtl.specular = 0.8
-        return self._scene.add_ground(
-            altitude=altitude,
-            render=render,
-            render_material=rend_mtl,
-        )
+        ab = self._scene.create_actor_builder()
+        if render:
+            ab.add_box_visual(half_size=[1., 1., .0001], material=rend_mtl)
+        ab.add_box_collision(half_size=[1., 1., .0001])
+
+        box = ab.build_static()
+        box.set_pose(sapien.Pose(p=[0,0,altitude-.0001]))
 
     def _load_actors(self):
         pass
@@ -379,12 +383,13 @@ class BaseEnv(gym.Env):
 
     def _setup_lighting(self):
         shadow = self.enable_shadow
-        self._scene.set_ambient_light([0.3, 0.3, 0.3])
+        self._scene.set_ambient_light([0.4, 0.4, 0.4, 1.0])
         # Only the first of directional lights can have shadow
         self._scene.add_directional_light(
-            [1, 1, -1], [1, 1, 1], shadow=shadow, scale=5, shadow_map_size=2048
+            [1, 1, -1], [2, 2, 2], shadow=shadow, scale=5, shadow_map_size=2048
         )
-        self._scene.add_directional_light([0, 0, -1], [1, 1, 1])
+        self._scene.add_directional_light([-1, 1, -1], [1.5, 1.5, 1.5])
+        self._scene.add_directional_light([1, -1, -1], [2.5, 2.5, 2.5])
 
     # -------------------------------------------------------------------------- #
     # Reset
