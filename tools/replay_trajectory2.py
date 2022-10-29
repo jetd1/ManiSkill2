@@ -39,8 +39,10 @@ def sample_unit_ball_north():
     
 poses = []
 def env_render(env):
-    env.render_camera.set_local_pose(
-        look_at(1.0*sample_unit_ball_north()+np.array([0.,0.,.5]), [0.0, 0.0, 0.5]))
+    scene_center = np.array([0.,0.,.5])
+    radius = 1.0
+    pose = look_at(radius * sample_unit_ball_north() + scene_center, scene_center)
+    env.render_camera.set_local_pose(pose)
     poses.append(deepcopy(env.render_camera.get_model_matrix()))
 
     #env.render()
@@ -469,6 +471,8 @@ def _main(args, proc_id: int = 0, num_procs=1, pbar=None):
             tqdm.write(f"Episode {episode_id} is not replayed successfully. Skipping")
 
         for i, p in enumerate(poses):
+            if i == 0:
+                continue
             np.savetxt(os.path.join(env.output_dir, f'0_{i:03d}.txt'), p)
         intr = env.render_camera.get_intrinsic_matrix()
         np.savetxt(os.path.join(env.output_dir, f'0_intrinsic.txt'), intr)

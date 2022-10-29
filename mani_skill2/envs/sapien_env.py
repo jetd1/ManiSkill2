@@ -81,7 +81,7 @@ class BaseEnv(gym.Env):
         if self._enable_kuafu:
             kuafu_config = sapien.KuafuConfig()
             kuafu_config.use_denoiser = False
-            kuafu_config.spp = 1
+            kuafu_config.spp = 4096
             if kuafu_kwargs is not None:
                 for k, v in kuafu_kwargs.items():
                     setattr(kuafu_config, k, v)

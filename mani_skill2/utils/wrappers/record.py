@@ -275,6 +275,8 @@ class RecordEpisode(gym.Wrapper):
             video_name += "_" + suffix
 
         for idx, img in enumerate(self._render_images):
+            if idx == 0:
+                continue
             img_name = f"{video_name}_{idx:03d}.png"
             alpha = ((img == 170).sum(axis=2) != 3).astype(np.uint8) * 255
             img = np.concatenate((img, alpha[:,:,None]), axis=2)
