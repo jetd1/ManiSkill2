@@ -43,7 +43,13 @@ def env_render(env):
     radius = 1.0
     pose = look_at(radius * sample_unit_ball_north() + scene_center, scene_center)
     env.render_camera.set_local_pose(pose)
-    poses.append(deepcopy(env.render_camera.get_model_matrix()))
+    pose = pose.to_transformation_matrix()
+    r =  pose[:3, :3] @ np.array(
+        [[0.,1, 0],
+        [ 0, 0,-1],
+        [-1, 0, 0]]).T
+    pose[:3, :3] = r
+    poses.append(pose)
 
     #env.render()
 
