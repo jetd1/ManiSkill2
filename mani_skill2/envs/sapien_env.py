@@ -363,11 +363,11 @@ class BaseEnv(gym.Env):
         rend_mtl.specular = 0.8
         ab = self._scene.create_actor_builder()
         if render:
-            ab.add_box_visual(half_size=[1., 1., .0001], material=rend_mtl)
-        ab.add_box_collision(half_size=[1., 1., .0001])
+            ab.add_box_visual(half_size=[.75, .75, .0001], material=rend_mtl)
+        ab.add_box_collision(half_size=[.75, .75, .0001])
 
         box = ab.build_static()
-        box.set_pose(sapien.Pose(p=[0,0,altitude-.0001]))
+        box.set_pose(sapien.Pose(p=[-0.2,0,altitude-.0001]))
 
     def _load_actors(self):
         pass
